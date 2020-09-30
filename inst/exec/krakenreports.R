@@ -1,3 +1,6 @@
+#!/usr/bin/env Rscript
+
+
 # Kraken pseudo cigars
 
 # Kraken information ####
@@ -21,6 +24,7 @@ library(dplyr)
 library(ggplot2)
 library(optparse)
 library(purrr)
+library(krakenreports)
 
 
 option_list <- list(

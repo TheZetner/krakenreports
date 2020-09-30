@@ -19,4 +19,5 @@ Imports:
     ggplot2,
     purrr,
     optparse,
-    rentrez
+    rentrez,
+    gridExtra
