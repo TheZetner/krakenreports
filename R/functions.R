@@ -80,7 +80,8 @@ tidyKmerData <- function(x){
 plotKmerCigar <- function(x, seqid){
   x %>%
     mutate(taxlvl = as.numeric(as.factor(taxeng)),
-           taxlvl2 = paste(taxlvl,". ", taxeng, sep = "")) %>%
+           taxlvl2 = paste(taxlvl,". ", taxeng, sep = ""),
+           taxlvl = as.factor(taxlvl)) %>%
     filter(SEQID == seqid) %>%
     ggplot(aes(y = taxlvl)) +
     geom_segment(aes(yend = taxlvl,
@@ -114,18 +115,3 @@ plotAllKmerCigars <- function(x, lg = F){
     group_map(~ plotKmerCigar(.x, .y), .keep=T)
   p
 }
-
-
-#' Get Copy to Bin command
-#'
-#' Make R Script executable
-#'
-#' @return command to run on CL to allow included R script for kraken report generation to be in bin folder
-#'
-#' @export
-
-installToBin <- function(){
-  system.file("scripts", "krakenreports.R", package = "krakenreports")
-  paste("ln -s",  system.file("scripts", "krakenreports.R", package = "krakenreports"))
-}
-

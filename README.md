@@ -1,8 +1,5 @@
 # krakenreports
 
-Scratch nonsense for now. 
-
-
 ## How to install: 
 
 Create a conda environment and then run the following
@@ -39,6 +36,12 @@ sbatch -p NMLResearch -c 1 --mem=4G --wrap="wget -O - https://raw.githubusercont
 ![](./images/exampleplot.png)
 
 ## Assorted Miscellaneous Ideas
+
+Install alone via remotes:
+```
+Rscript --vanilla -e 'remotes::install_github("TheZetner/krakenreports")'
+```
+
 
 Sometimes it's worth linking files:
 ```

@@ -40,16 +40,28 @@ option_list <- list(
   make_option(c("-o", "--output"),
               action="store",
               default=paste(Sys.Date(), "_krakenreports", sep = ""),
-              help="Output prefix")
+              help="Output prefix"),
+  make_option(c("-l", "--nolog"),
+              action="store_false",
+              default=TRUE,
+              help="Store log?")
 )
 
 opt <- parse_args(OptionParser(option_list=option_list), positional_arguments = TRUE)
+
+fileprefix <- tools::file_path_sans_ext(opt$options$output)
+
+if(opt$options$nolog){
+  con <- file(paste0(fileprefix, ".log"))
+  sink(con, append=TRUE)
+  sink(con, append=TRUE, type="message")
+}
 
 mapped <- readKmerData(x = opt$options$input)
 
 x <-tidyKmerData(mapped)
 
-fileprefix <- tools::file_path_sans_ext(opt$options$output)
+
 
 # Write reports
 x %>%
@@ -67,17 +79,18 @@ x %>%
 
 # Write Plots
 message(paste("Writing plots to", paste0(fileprefix, ".pdf")))
-suppressMessages({
-  pdf(paste0(fileprefix, ".pdf"))
-  if(is.na(opt$options$seqid)){
-    plotAllKmerCigars(x)
-  }else {
-    opt$options$seqid <- x$SEQID[283]
-    plotKmerCigar(x, opt$options$seqid)
-  }
-  forgotten <- dev.off()
-})
+pdf(paste0(fileprefix, ".pdf"))
+if(is.na(opt$options$seqid)){
+  plotAllKmerCigars(x)
+}else {
+  opt$options$seqid <- x$SEQID[283]
+  plotKmerCigar(x, opt$options$seqid)
+}
+dev.off()
 
+if(opt$options$nolog){
+  sink()
+}
 
 
 
