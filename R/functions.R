@@ -109,7 +109,7 @@ plotKmerCigar <- function(x, seqid){
 #' @export
 
 plotAllKmerCigars <- function(x, lg = F){
-  if(n_distinct(x$SEQID) > 20 & lg == FALSE){return(message("Are you sure you want to create ", n_distinct(x$QNAME), " plots? Use argument lg=TRUE or filter your reads."))}
+  if(n_distinct(x$SEQID) > 20 & lg == FALSE){return(message("Are you sure you want to create ", n_distinct(x$SEQID), " plots? Use argument lg=TRUE or filter your reads."))}
   p <- x %>%
     group_by(SEQID) %>%
     group_map(~ plotKmerCigar(.x, .y), .keep=T)

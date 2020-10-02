@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-eval "$(conda shell.bash hook)"
 
 # Usage:
 # Loop through a series of NGS datasets run kraken2 against combined human/covid database on each of the run fastqs
