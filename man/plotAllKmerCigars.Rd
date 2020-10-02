@@ -4,7 +4,7 @@
 \alias{plotAllKmerCigars}
 \title{Plot All Kmer CIGARs}
 \usage{
-plotAllKmerCigars(x, lg = F)
+plotAllKmerCigars(x, lg = FALSE)
 }
 \arguments{
 \item{x}{tidied kmer cigar data from tidyKmerCigar}
