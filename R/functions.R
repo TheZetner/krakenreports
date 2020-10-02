@@ -91,6 +91,7 @@ plotKmerCigar <- function(x, seqid){
                  show.legend = T) +
     theme(legend.title = element_blank(),
           legend.position='bottom') +
+    scale_colour_viridis_d(begin = 0.2, direction = -1) +
     guides(colour=guide_legend(ncol=2)) +
     labs(x = "K-mer Position in Sequence",
          y = "Taxonomic Identification",

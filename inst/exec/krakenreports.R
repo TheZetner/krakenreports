@@ -18,14 +18,15 @@
 
 # Script ####
 
-library(readr)
-library(tidyr)
-library(dplyr)
-library(ggplot2)
-library(optparse)
-library(purrr)
-library(krakenreports)
-
+suppressPackageStartupMessages({
+  library(readr)
+  library(tidyr)
+  library(dplyr)
+  library(ggplot2)
+  library(optparse)
+  library(purrr)
+  library(krakenreports)
+})
 
 option_list <- list(
   make_option(c("-i", "--input"),
@@ -65,14 +66,18 @@ x %>%
   write_csv(paste0(fileprefix, "_allseqs.csv"))
 
 # Write Plots
-print(paste("Writing plots to", paste0(fileprefix, ".pdf")))
-pdf(paste0(fileprefix, ".pdf"))
-if(is.na(opt$options$seqid)){
-  plotAllKmerCigars(x)
-}else {
-  opt$options$seqid <- x$SEQID[283]
-  plotKmerCigar(x, opt$options$seqid)
-}
-dev.off()
+message(paste("Writing plots to", paste0(fileprefix, ".pdf")))
+suppressMessages({
+  pdf(paste0(fileprefix, ".pdf"))
+  if(is.na(opt$options$seqid)){
+    plotAllKmerCigars(x)
+  }else {
+    opt$options$seqid <- x$SEQID[283]
+    plotKmerCigar(x, opt$options$seqid)
+  }
+  forgotten <- dev.off()
+})
+
+
 
 
