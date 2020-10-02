@@ -21,16 +21,31 @@ sbatch -p NMLResearch -c 1 --mem=4G --wrap="wget -O - https://raw.githubusercont
     * Installs R Packages Remotes(CRAN) and Krakenreports(Github)
     * Copies executable scripts to the bin/ folder of your Conda environment
 
-## Executable Scripts
+### Executable Scripts
 
 `runkraken.sh` to run kraken2 via sbatch on a folder of fastq files  
 `krakenreports.R` to create plots and reports of the results  
 
 
+
+## Results
+
+### Two Tables of Results
+ * `<PREFIX>_perseq.csv` - Identified k-mer counts by taxonomy per read sequence
+ * `<PREFIX>_allseq.csv` - Identified k-mer counts by taxonomy for all
+
+### Plot
+
+![](./images/exampleplot.png)
+
 ## Assorted Miscellaneous Ideas
 
 Sometimes it's worth linking files:
-`for i in `ls ../../005_SSmap0/*-kraken.tsv`; do ln -s $i ./; done`
+```
+for i in `ls ../../<FOLDEROFFILES>/*-kraken.tsv`; do ln -s $i ./; done
+```
  
 Searching for human (9606) reads in kraken2 output:
-`grep -P "\s+9606\s+" -H *-kraken.tsv > human.tsv`
+```
+grep -P "\s+9606\s+" -H *-kraken.tsv > human.tsv
+```
