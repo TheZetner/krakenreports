@@ -31,11 +31,15 @@ option_list <- list(
   make_option(c("-i", "--input"),
               action="store",
               default=system.file("extdata", "mapped.tsv", package = "krakenreports"),
-              help="Kraken TSV"),
+              help="Kraken TSV - example included with package. Run without input to test."),
   make_option(c("-s", "--seqid"),
               action="store",
               default=NA,
-              help="Sequence ID to display only one")
+              help="Sequence ID to display only one"),
+  make_option(c("-o", "--output"),
+              action="store",
+              default=paste(Sys.Date(), "_krakenreports", sep = ""),
+              help="Output prefix")
 )
 
 opt <- parse_args(OptionParser(option_list=option_list), positional_arguments = TRUE)
@@ -44,8 +48,25 @@ mapped <- readKmerData(x = opt$options$input)
 
 x <-tidyKmerData(mapped)
 
+fileprefix <- tools::file_path_sans_ext(opt$options$output)
 
-pdf()
+# Write reports
+x %>%
+  count(taxeng) %>%
+  arrange(SEQID, desc(n)) %>%
+  select(Sequence = SEQID, TaxonomicName = taxeng, Count = n) %>%
+  write_csv(paste0(fileprefix, "_perseq.csv"))
+
+x %>%
+  ungroup() %>%
+  count(taxeng) %>%
+  arrange(desc(n)) %>%
+  select(TaxonomicName = taxeng, Count = n) %>%
+  write_csv(paste0(fileprefix, "_allseqs.csv"))
+
+# Write Plots
+print(paste("Writing plots to", paste0(fileprefix, ".pdf")))
+pdf(paste0(fileprefix, ".pdf"))
 if(is.na(opt$options$seqid)){
   plotAllKmerCigars(x)
 }else {
