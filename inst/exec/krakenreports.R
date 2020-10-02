@@ -81,9 +81,8 @@ x %>%
 message(paste("Writing plots to", paste0(fileprefix, ".pdf")))
 pdf(paste0(fileprefix, ".pdf"))
 if(is.na(opt$options$seqid)){
-  plotAllKmerCigars(x)
+  plotAllKmerCigars(x, lg = TRUE)
 }else {
-  opt$options$seqid <- x$SEQID[283]
   plotKmerCigar(x, opt$options$seqid)
 }
 dev.off()
