@@ -18,6 +18,14 @@ sbatch -p NMLResearch -c 1 --mem=4G --wrap="wget -O - https://raw.githubusercont
     * Installs R Packages Remotes(CRAN) and Krakenreports(Github)
     * Copies executable scripts to the bin/ folder of your Conda environment
 
+## How to update (lazily)
+
+To update krakenreports and its executable scripts run the following in your Conda environment. 
+
+```
+sbatch -p NMLResearch -c 1 --mem=4G --wrap="wget -O - https://raw.githubusercontent.com/TheZetner/krakenreports/master/inst/exec/update.sh | bash"
+```
+
 ### Executable Scripts
 
 `runkraken.sh` to run kraken2 via sbatch on a folder of fastq files  
