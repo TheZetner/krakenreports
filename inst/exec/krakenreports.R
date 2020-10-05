@@ -61,15 +61,14 @@ mapped <- readKmerData(x = opt$options$input)
 
 x <-tidyKmerData(mapped)
 
-
-
 # Write reports
 # Kmers per sequence
 x %>%
   ungroup() %>%
   group_by(Status, SEQID, taxeng) %>%
   summarise(Count = sum(kmers)) %>%
-  select(Status, Sequence = SEQID, TaxonomicName = taxeng, Count) %>%
+  arrange(Status, SEQID, desc(Count)) %>%
+  select(Status, Sequence = SEQID, TaxonomicName = taxeng, Count)
   write_csv(paste0(fileprefix, "_perseq.csv"))
 
 # All Kmers analy
