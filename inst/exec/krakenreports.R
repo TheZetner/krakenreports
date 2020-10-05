@@ -51,11 +51,11 @@ opt <- parse_args(OptionParser(option_list=option_list), positional_arguments = 
 
 fileprefix <- tools::file_path_sans_ext(opt$options$output)
 
-if(opt$options$nolog){
-  con <- file(paste0(fileprefix, ".log"))
-  sink(con, append=TRUE)
-  sink(con, append=TRUE, type="message")
-}
+# if(opt$options$nolog){
+#   con <- file(paste0(fileprefix, ".log"))
+#   sink(con, append=TRUE)
+#   sink(con, append=TRUE, type="message")
+# }
 
 mapped <- readKmerData(x = opt$options$input)
 
@@ -64,17 +64,21 @@ x <-tidyKmerData(mapped)
 
 
 # Write reports
-x %>%
-  count(taxeng) %>%
-  arrange(SEQID, desc(n)) %>%
-  select(Sequence = SEQID, TaxonomicName = taxeng, Count = n) %>%
-  write_csv(paste0(fileprefix, "_perseq.csv"))
-
+# Kmers per sequence
 x %>%
   ungroup() %>%
-  count(taxeng) %>%
-  arrange(desc(n)) %>%
-  select(TaxonomicName = taxeng, Count = n) %>%
+  group_by(Status, SEQID, taxeng) %>%
+  summarise(Count = sum(kmers)) %>%
+  select(Status, Sequence = SEQID, TaxonomicName = taxeng, Count) %>%
+  write_csv(paste0(fileprefix, "_perseq.csv"))
+
+# All Kmers analy
+x %>%
+  ungroup() %>%
+  group_by(taxeng) %>%
+  summarise(Count = sum(kmers)) %>%
+  arrange(desc(Count)) %>%
+  select(TaxonomicName = taxeng, Count) %>%
   write_csv(paste0(fileprefix, "_allseqs.csv"))
 
 # Write Plots

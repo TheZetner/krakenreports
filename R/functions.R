@@ -22,7 +22,7 @@ readKmerData <- function(x){
 #' Grabs the NCBI taxa names and returns a tidied kmer tibble
 #'
 #' @param x kraken tsv file imported with read.delim
-#' @return tibble of tidied kmer data: Status SEQID TAXID Length order taxid taxeng kmers CIGARPOS CIGARPOS2
+#' @return tibble of tidied kmer data: Status SEQID TAXID Length order taxid taxeng kmers CIGARstart CIGARstart
 #'
 #' @import dplyr tibble tidyr forcats rentrez
 #'
@@ -33,7 +33,7 @@ tidyKmerData <- function(x){
     separate_rows(CIGAR, sep = " ") %>%
     group_by(SEQID) %>%
     mutate(order = row_number()) %>%
-    separate(CIGAR, into = c("taxid", "kmers")) %>%
+    separate(CIGAR, into = c("taxid", "kmers"), convert = T) %>%
     ungroup()
 
   x %>%
@@ -59,10 +59,11 @@ tidyKmerData <- function(x){
                taxid = first(.$taxid, 1),
                taxeng = first(.$taxeng, 1),
                kmers = first(.$kmers, 1),
-               CIGARPOS = 1)) %>%
+               CIGARPOS = 0)) %>% # Start at 0 so lag mutate will make first kmer pos 1
     arrange(SEQID, CIGARPOS) %>%
-    mutate(CIGARPOS2 = lag(CIGARPOS)) %>%
-    filter(!is.na(CIGARPOS2))
+    mutate(CIGARPOS2 = lag(CIGARPOS) + 1) %>% # Plus 1 because so kmer positions don't overlap
+    rename(CIGARstart = CIGARPOS2, CIGARend = CIGARPOS) %>%
+    filter(!is.na(CIGARstart))
 }
 
 #' Plot k-mer CIGAR
@@ -85,8 +86,8 @@ plotKmerCigar <- function(x, seqid){
     filter(SEQID == seqid) %>%
     ggplot(aes(y = taxlvl)) +
     geom_segment(aes(yend = taxlvl,
-                     x = CIGARPOS2 - 0.5,
-                     xend = CIGARPOS + 0.5,
+                     x = CIGARstart - 0.5,
+                     xend = CIGARend + 0.5,
                      colour = taxlvl2),
                  size = 2,
                  show.legend = T) +

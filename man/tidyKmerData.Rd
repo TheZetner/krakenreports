@@ -10,7 +10,7 @@ tidyKmerData(x)
 \item{x}{kraken tsv file imported with read.delim}
 }
 \value{
-tibble of tidied kmer data: Status SEQID TAXID Length order taxid taxeng kmers CIGARPOS CIGARPOS2
+tibble of tidied kmer data: Status SEQID TAXID Length order taxid taxeng kmers CIGARstart CIGARstart
 }
 \description{
 Grabs the NCBI taxa names and returns a tidied kmer tibble
