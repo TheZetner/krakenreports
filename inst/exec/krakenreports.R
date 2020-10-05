@@ -51,11 +51,11 @@ opt <- parse_args(OptionParser(option_list=option_list), positional_arguments = 
 
 fileprefix <- tools::file_path_sans_ext(opt$options$output)
 
-# if(opt$options$nolog){
-#   con <- file(paste0(fileprefix, ".log"))
-#   sink(con, append=TRUE)
-#   sink(con, append=TRUE, type="message")
-# }
+if(opt$options$nolog){
+  con <- file(paste0(fileprefix, ".log"))
+  sink(con, append=TRUE)
+  sink(con, append=TRUE, type="message")
+}
 
 mapped <- readKmerData(x = opt$options$input)
 
@@ -68,7 +68,7 @@ x %>%
   group_by(Status, SEQID, taxeng) %>%
   summarise(Count = sum(kmers)) %>%
   arrange(Status, SEQID, desc(Count)) %>%
-  select(Status, Sequence = SEQID, TaxonomicName = taxeng, Count)
+  select(Status, Sequence = SEQID, TaxonomicName = taxeng, Count) %>%
   write_csv(paste0(fileprefix, "_perseq.csv"))
 
 # All Kmers analy
