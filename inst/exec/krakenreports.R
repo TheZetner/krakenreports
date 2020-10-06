@@ -41,6 +41,10 @@ option_list <- list(
               action="store",
               default=paste(Sys.Date(), "_krakenreports", sep = ""),
               help="Output prefix"),
+  make_option(c("-p", "--paired"),
+              action="store_true",
+              default=FALSE,
+              help="Paired end data?"),
   make_option(c("-l", "--nolog"),
               action="store_false",
               default=TRUE,
@@ -59,7 +63,11 @@ if(opt$options$nolog){
 
 mapped <- readKmerData(x = opt$options$input)
 
-x <-tidyKmerData(mapped)
+if(opt$options$paired){
+  x <-tidyPairedKmerData(mapped)
+  } else{
+  x <-tidyKmerData(mapped)
+  }
 
 # Write reports
 # Kmers per sequence
@@ -68,10 +76,10 @@ x %>%
   group_by(Status, SEQID, taxeng) %>%
   summarise(Count = sum(kmers)) %>%
   arrange(Status, SEQID, desc(Count)) %>%
-  select(Status, Sequence = SEQID, TaxonomicName = taxeng, Count) %>%
+  select(Status, Sequence = SEQID, TaxonomicName = taxeng, Count, everything()) %>%
   write_csv(paste0(fileprefix, "_perseq.csv"))
 
-# All Kmers analy
+# All Kmers
 x %>%
   ungroup() %>%
   group_by(taxeng) %>%
