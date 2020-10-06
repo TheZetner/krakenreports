@@ -37,7 +37,7 @@ tidyKmerData <- function(x){
     ungroup()
 
   x %>%
-    filter(!(taxid %in% c(0, "A"))) %>%
+    filter(taxid != 0, taxid != "A") %>%
     select(taxid) %>%
     unique() %>%
     rowwise(taxid) %>%
@@ -47,6 +47,10 @@ tidyKmerData <- function(x){
     right_join(x, by = "taxid") %>%
     mutate(taxeng = replace_na(taxeng, "Unclassified")) %>%
     select(Status, SEQID, TAXID, Length, order, taxid, taxeng, kmers) %>%
+    mutate(taxeng = case_when(
+      taxid == "A" ~ "Ambiguous",
+      TRUE ~ taxeng
+    )) %>%
     group_by(SEQID) %>%
     arrange(order) %>%
     mutate(CIGARPOS = cumsum(kmers)) %>%
@@ -63,12 +67,67 @@ tidyKmerData <- function(x){
     arrange(SEQID, CIGARPOS) %>%
     mutate(CIGARPOS2 = lag(CIGARPOS) + 1) %>% # Plus 1 because so kmer positions don't overlap
     rename(CIGARstart = CIGARPOS2, CIGARend = CIGARPOS) %>%
-    filter(!is.na(CIGARstart)) %>%
+    filter(!is.na(CIGARstart))
+}
+
+#' Tidy Paired Kmer data in preparation to plot
+#'
+#' Grabs the NCBI taxa names and returns a tidied kmer tibble. Includes consideration for reads from paired data
+#'
+#' @param x kraken tsv file imported with read.delim
+#' @return tibble of tidied kmer data: Status SEQID TAXID Length order taxid taxeng kmers read CIGARstart CIGARstart
+#'
+#' @import dplyr tibble tidyr forcats rentrez
+#'
+#' @export
+
+tidyPairedKmerData <- function(x){
+  x <- mapped %>%
+    separate(Length, into = c("Length_1", "Length_2")) %>%
+    separate(CIGAR, into = c("CIGAR_1", "CIGAR_2"), sep = " \\|\\:\\| " ) %>%
+    pivot_longer(cols = Length_1:CIGAR_2, names_to = c("Set", "read"), names_pattern = "(.*)_(.*)") %>%
+    pivot_wider(id_cols = c("Status", "SEQID", "TAXID", "Set", "read"), names_from = "Set", values_from = "value") %>%
+    separate_rows(CIGAR, sep = " ") %>%
+    group_by(SEQID, read) %>%
+    mutate(order = row_number()) %>%
+    separate(CIGAR, into = c("taxid", "kmers"), convert = T) %>%
+    ungroup()
+
+  x %>%
+    filter(taxid != 0, taxid != "A") %>%
+    select(taxid) %>%
+    unique() %>%
+    rowwise(taxid) %>%
+    mutate(taxeng = rentrez::entrez_fetch(db = "taxonomy", id = taxid, rettype = "text"),
+           taxeng = stringr::str_match(taxeng, pattern = "1\\. (.*)\n"),
+           taxeng = taxeng[,2]) %>%
+    right_join(x, by = "taxid") %>%
+    mutate(taxeng = replace_na(taxeng, "Unclassified")) %>%
+    select(Status, SEQID, TAXID, Length, order, taxid, taxeng, kmers, everything()) %>%
     mutate(taxeng = case_when(
       taxid == "A" ~ "Ambiguous",
       TRUE ~ taxeng
-    ))
+    )) %>%
+    group_by(SEQID, read) %>%
+    arrange(order) %>%
+    mutate(CIGARPOS = cumsum(kmers)) %>%
+    do(add_row(.,
+               Status = first(.$Status, 1),
+               SEQID = first(.$SEQID, 1),
+               TAXID = first(.$TAXID, 1),
+               Length = first(.$Length, 1),
+               order = first(.$order, 1),
+               taxid = first(.$taxid, 1),
+               taxeng = first(.$taxeng, 1),
+               kmers = first(.$kmers, 1),
+               read = first(.$read, 1),
+               CIGARPOS = 0)) %>% # Start at 0 so lag mutate will make first kmer pos 1
+    arrange(SEQID, read, CIGARPOS) %>%
+    mutate(CIGARPOS2 = lag(CIGARPOS) + 1) %>% # Plus 1 because so kmer positions don't overlap
+    rename(CIGARstart = CIGARPOS2, CIGARend = CIGARPOS) %>%
+    filter(!is.na(CIGARstart))
 }
+
 
 #' Plot k-mer CIGAR
 #'
@@ -83,7 +142,7 @@ tidyKmerData <- function(x){
 #' @export
 
 plotKmerCigar <- function(x, seqid){
-  x %>%
+  p <- x %>%
     mutate(taxlvl = as.numeric(as.factor(taxeng)),
            taxlvl2 = paste(taxlvl,". ", taxeng, sep = ""),
            taxlvl = as.factor(taxlvl)) %>%
@@ -102,6 +161,11 @@ plotKmerCigar <- function(x, seqid){
     labs(x = "K-mer Position in Sequence",
          y = "Taxonomic Identification",
          title = seqid)
+  if("read" %in% names(x)){
+    p + facet_grid(read ~ ., scales = "free", labeller = label_both)
+  } else{
+    p
+  }
 }
 
 #' Plot All Kmer CIGARs
