@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo Installing Kraken2
-conda install -c bioconda kraken2
+conda install -y -c bioconda kraken2
 
 echo Installing R dependencies
 conda install -y -c r r-base
