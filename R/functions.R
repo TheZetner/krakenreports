@@ -37,7 +37,7 @@ tidyKmerData <- function(x){
     ungroup()
 
   x %>%
-    filter(taxid != 0) %>%
+    filter(!(taxid %in% c(0, "A"))) %>%
     select(taxid) %>%
     unique() %>%
     rowwise(taxid) %>%
@@ -63,7 +63,11 @@ tidyKmerData <- function(x){
     arrange(SEQID, CIGARPOS) %>%
     mutate(CIGARPOS2 = lag(CIGARPOS) + 1) %>% # Plus 1 because so kmer positions don't overlap
     rename(CIGARstart = CIGARPOS2, CIGARend = CIGARPOS) %>%
-    filter(!is.na(CIGARstart))
+    filter(!is.na(CIGARstart)) %>%
+    mutate(taxeng = case_when(
+      taxid == "A" ~ "Ambiguous",
+      TRUE ~ taxeng
+    ))
 }
 
 #' Plot k-mer CIGAR
