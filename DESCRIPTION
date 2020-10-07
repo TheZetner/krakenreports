@@ -6,7 +6,7 @@ Authors@R:
            family = "Zetner",
            role = c("aut", "cre"),
            email = "adrian.zetner@canada.ca")
-Description: What the package does (one paragraph).
+Description: Krakenreports includes functions and scripts to accomplish several tasks: first ease of install via conda, second running kraken2 on a slurm cluster against a directory of files, third an executable R script to analyze and visualize the kraken results. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

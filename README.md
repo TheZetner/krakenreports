@@ -67,6 +67,7 @@ sbatch -p NMLResearch -c 1 --mem=4G --wrap="wget -O - https://raw.githubusercont
 ### Plot
 
 ![](./images/exampleplot.png)
+![](./images/paired.png)
 
 ## Assorted Miscellaneous Ideas
 
