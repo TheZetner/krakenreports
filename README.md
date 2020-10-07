@@ -38,18 +38,23 @@ sbatch -p NMLResearch -c 1 --mem=4G --wrap="wget -O - https://raw.githubusercont
 ### Two Tables of Results
  * `<PREFIX>_perseq.csv` - Identified k-mer counts by taxonomy per read sequence
  
-|Status            |Sequence                             |TaxonomicName                                         | Count|
-|:-----------------|:------------------------------------|:-----------------------------------------------------|-----:|
-|RUN1-kraken.tsv:C |0ff47476-cf92-4d8e-84fc-d40a428abc74 |Unclassified                                          |  1068|
-|RUN1-kraken.tsv:C |0ff47476-cf92-4d8e-84fc-d40a428abc74 |Homo sapiens                                          |   352|
-|RUN1-kraken.tsv:C |0ff47476-cf92-4d8e-84fc-d40a428abc74 |Severe acute respiratory syndrome coronavirus 2       |   305|
-|RUN1-kraken.tsv:C |0ff47476-cf92-4d8e-84fc-d40a428abc74 |Severe acute respiratory syndrome-related coronavirus |     4|
-|RUN1-kraken.tsv:C |e65bf971-c5cf-4540-8b7f-0481f9c3ad0a |Unclassified                                          |  1219|
-|RUN1-kraken.tsv:C |e65bf971-c5cf-4540-8b7f-0481f9c3ad0a |Homo sapiens                                          |   246|
-|RUN1-kraken.tsv:C |e65bf971-c5cf-4540-8b7f-0481f9c3ad0a |Severe acute respiratory syndrome coronavirus 2       |   187|
-|RUN1-kraken.tsv:C |e65bf971-c5cf-4540-8b7f-0481f9c3ad0a |Coronaviridae                                         |     5|
-|RUN1-kraken.tsv:C |e65bf971-c5cf-4540-8b7f-0481f9c3ad0a |Severe acute respiratory syndrome-related coronavirus |     5|
-|RUN1-kraken.tsv:C |ebf5db73-da7e-40fd-8ab4-b6e0e1b47359 |Unclassified                                          |  1741|
+|Status            |Sequence    |TaxonomicName                                         | Count|
+|:-----------------|:-----------|:-----------------------------------------------------|-----:|
+|RUN1-kraken.tsv:C |FAKE-READ-1 |Unclassified                                          |  1741|
+|RUN1-kraken.tsv:C |FAKE-READ-1 |Homo sapiens                                          |   268|
+|RUN1-kraken.tsv:C |FAKE-READ-1 |Severe acute respiratory syndrome coronavirus 2       |   251|
+|RUN1-kraken.tsv:C |FAKE-READ-2 |Unclassified                                          |  1219|
+|RUN1-kraken.tsv:C |FAKE-READ-2 |Homo sapiens                                          |   246|
+|RUN1-kraken.tsv:C |FAKE-READ-2 |Severe acute respiratory syndrome coronavirus 2       |   187|
+|RUN1-kraken.tsv:C |FAKE-READ-2 |Coronaviridae                                         |     5|
+|RUN1-kraken.tsv:C |FAKE-READ-2 |Severe acute respiratory syndrome-related coronavirus |     5|
+|RUN1-kraken.tsv:C |FAKE-READ-3 |Unclassified                                          |  1068|
+|RUN1-kraken.tsv:C |FAKE-READ-3 |Homo sapiens                                          |   352|
+|RUN1-kraken.tsv:C |FAKE-READ-3 |Severe acute respiratory syndrome coronavirus 2       |   305|
+|RUN1-kraken.tsv:C |FAKE-READ-3 |Severe acute respiratory syndrome-related coronavirus |     4|
+|RUN2-kraken.tsv:C |FAKE-READ-4 |Unclassified                                          |  1108|
+|RUN2-kraken.tsv:C |FAKE-READ-4 |Homo sapiens                                          |   338|
+|RUN2-kraken.tsv:C |FAKE-READ-4 |Severe acute respiratory syndrome coronavirus 2       |   241|
 
  * `<PREFIX>_allseq.csv` - Identified k-mer counts by taxonomy for all
 
