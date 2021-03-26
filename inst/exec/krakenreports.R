@@ -69,7 +69,7 @@ if(opt$options$paired){
   x <-tidyKmerData(mapped)
   }
 
-# Write reports
+# CSV Reports ####
 # Kmers per sequence
 x %>%
   ungroup() %>%
@@ -88,7 +88,15 @@ x %>%
   select(TaxonomicName = taxeng, Count) %>%
   write_csv(paste0(fileprefix, "_allseqs.csv"))
 
-# Write Plots
+# Plots ####
+
+# Write Summary Plot
+message(paste("Writing summary plot to", paste0(fileprefix, "-summary", ".png")))
+pdf(paste0(fileprefix, "-summary", ".pdf"), width = 12, height = 8)
+plotSummary(x)
+dev.off()
+
+# Write Individual Plots
 message(paste("Writing plots to", paste0(fileprefix, ".pdf")))
 pdf(paste0(fileprefix, ".pdf"))
 if(is.na(opt$options$seqid)){
@@ -98,9 +106,9 @@ if(is.na(opt$options$seqid)){
 }
 dev.off()
 
+
 if(opt$options$nolog){
   sink()
 }
-
 
 

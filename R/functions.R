@@ -184,3 +184,38 @@ plotAllKmerCigars <- function(x, lg = FALSE){
     group_map(~ plotKmerCigar(.x, .y), .keep=T)
   p
 }
+
+
+#' Plot Summary Ridges
+#'
+#' Create ridges plot that shows what proportion of kmers in all reads are assigned to each taxonomic group
+#'
+#' @param x tidied kmer cigar data from tidyKmerCigar
+#' @return Ridges plots
+#'
+#' @export
+
+plotSummary <- function(x){
+  x %>%
+    ungroup() %>%
+    group_by(Status, SEQID, taxeng) %>%
+    summarise(Count = sum(kmers)) %>%
+    arrange(Status, SEQID, desc(Count)) %>%
+    select(Status, Sequence = SEQID, TaxonomicName = taxeng, Count, everything()) %>%
+    group_by(Status, Sequence) %>%
+    mutate(Count = replace_na(Count, 0),
+           kmers = sum(Count)) %>%
+    mutate(prop = Count/kmers) %>%
+    filter(!is.nan(prop)) %>%
+    ungroup() %>%
+    semi_join(., count(., TaxonomicName) %>% filter(n > 1), by = "TaxonomicName") %>%
+    ggplot(aes(x = prop, y = fct_rev(TaxonomicName), fill = TaxonomicName)) +
+    geom_density_ridges(alpha = 0.5, rel_min_height = 0) +
+    labs(title = "Density of k-mer Proportion by Taxonomy for all Analyzed Reads",
+         x = "Proportion of k-mers in Read Assigned to Taxonomic Name",
+         y = "Taxonomic Name",
+         fill = "Taxonomic Name") +
+    theme(legend.position = "bottom",
+          legend.direction = "vertical")
+
+}
