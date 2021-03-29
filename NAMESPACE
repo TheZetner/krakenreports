@@ -2,6 +2,7 @@
 
 export(plotAllKmerCigars)
 export(plotKmerCigar)
+export(plotSummary)
 export(readKmerData)
 export(tidyKmerData)
 export(tidyPairedKmerData)

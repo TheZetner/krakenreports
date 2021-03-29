@@ -20,4 +20,6 @@ Imports:
     purrr,
     optparse,
     rentrez,
-    gridExtra
+    gridExtra,
+    stringi,
+    ggridges
